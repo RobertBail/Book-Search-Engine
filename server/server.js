@@ -12,16 +12,22 @@ const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: authMiddleware,
+  context: ({ req }) => {
+    // Apply the auth middleware to every request
+    const auth = authMiddleware({ req });
+    return { auth };
+  },
 });
-server.applyMiddleware({ app });
+
 const app = express();
+app.use(routes);
 
 // Create a new instance of an Apollo server with the GraphQL schema
 const startApolloServer = async () => {
   await server.start();
+ // server.applyMiddleware({ app });
   
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
   app.use('/graphql', expressMiddleware(server));
@@ -33,7 +39,7 @@ const startApolloServer = async () => {
       //res.sendFile(path.join(__dirname, '../client/build/index.html'));
     //});
   } 
-  app.use(routes);
+ 
 
   db.once('open', () => {
     app.listen(PORT, () => {
