@@ -25,7 +25,7 @@ app.use(express.json());
 // Create a new instance of an Apollo server with the GraphQL schema
 const startApolloServer = async () => {
   await server.start();
- // server.applyMiddleware({ app });
+ //server.applyMiddleware({ app });
   //app.use(routes);
   
   //require('./routes/index')(app);
