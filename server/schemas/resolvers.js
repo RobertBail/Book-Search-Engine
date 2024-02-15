@@ -8,13 +8,13 @@ const resolvers = {
           const userData = await User.findOne({ _id: context.user._id }).select('-__v -password');
           return userData;
         }
-        throw new AuthenticationError('You`re not logged in!');
+        throw AuthenticationError;
       },
     },
   
     Mutation: {
       addUser: async (parent, {username, email, password}) => {
-        const user = await User.create(username, email, password);
+        const user = await User.create({username, email, password});
         const token = signToken(user);
         return { token, user };
       },
@@ -22,13 +22,13 @@ const resolvers = {
          const user = await User.findOne({ email });
       
          if (!user) {
-          throw new AuthenticationError('User not found');
+          throw AuthenticationError;
           }
       
          const correctPW = await user.isCorrectPassword(password);
       
          if (!correctPW) {
-         throw new AuthenticationError('Incorrect credentials');
+         throw AuthenticationError;
             }
       
          const token = signToken(user);
